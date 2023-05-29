@@ -48,9 +48,10 @@ class CardGame {
         if (img1 === img2) {//if two cards images match
             this.matchedCard++;
             if (this.matchedCard == 8) {
+                clearInterval(this.countDown.timerId);
                 setTimeout(() => {
-                    return this.shuffleCard();
-                }, 1000);//calling shuffleCard function after 1 sec
+                    return this.updateGameState();
+                }, 4000);//calling shuffleCard function after 2 sec
             };
             this.cardOne.removeEventListener('click', this.flipCard);
             this.cardTwo.removeEventListener('click', this.flipCard);
@@ -61,20 +62,20 @@ class CardGame {
         };
         //if two cards do not match
         setTimeout(() => {
-            //adding shake class to both card after 400ms
+            //adding shake class to both card after 300ms
             this.cardOne.classList.add('shake');
             this.cardTwo.classList.add('shake');
-        }, 400);
+        }, 300);
 
         setTimeout(() => {
-            //remove both shake and flip classes from both cards after 1200ms
+            //remove both shake and flip classes from both cards after 900ms
             this.cardOne.classList.remove('shake', 'flip');
             this.cardTwo.classList.remove('shake', 'flip');
             // this.cardOne = cardTwo = "";//setting both card value to blank
             this.cardOne = null;
             this.cardTwo = null;
             this.disableDeck = false;
-        }, 1000);
+        }, 900);
     }
 
     shuffleCard() {
@@ -91,18 +92,22 @@ class CardGame {
         this.cards.forEach((card, index) => {
             card.classList.remove('flip');
             let imgTag = card.querySelector('img');
-            imgTag.src = `./images/card${arr[index]}.jpeg`
+            imgTag.src = `./images/card${arr[index]}.jpeg`;
             card.addEventListener('click', this.flipCard);
         });
     }
 
+    updateGameState() {
+        this.shuffleCard();
+        clearInterval(this.countDown.timerId);
+        this.countDown.timeSecond = 60;
+        this.countDown.countDownDisplay.textContent = 'Time: ' + this.countDown.timeSecond + 's';
+        this.flipsCountDisplay.textContent = 'Flips: ' + this.flipsCount;
+    }
+
     refreshGame() {
         this.refreshBtn.addEventListener('click', () => {
-            this.shuffleCard();
-            clearInterval(this.countDown.timerId);
-            this.countDown.timeSecond = 60;
-            this.countDown.countDownDisplay.textContent = 'Time: ' + this.countDown.timeSecond + 's';
-            this.flipsCountDisplay.textContent = 'Flips: ' + this.flipsCount;
+            this.updateGameState();
         });
     }
 }
